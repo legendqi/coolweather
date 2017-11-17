@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">欧酷天气</string>
+    <string name="app_splash_name">欧酷天气</string>
+    <string name="coder">开发者：legend奇</string>
 </resources>
