@@ -1,35 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.joker.agepride.coolweather.SpashActivity">
+    tools:context="com.joker.agepride.coolweather.activity.SpashActivity">
 
-    <ImageView
-        android:scaleType="fitXY"
-        android:fitsSystemWindows="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/splash1"
-         />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:gravity="center"
-        android:textSize="23sp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
-        android:text="@string/app_splash_name"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:id="@+id/tv_bxbxbai"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:layout_marginBottom="8dp"
-        android:text="@string/coder"/>
 </RelativeLayout>
