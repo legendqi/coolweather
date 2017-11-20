@@ -2,8 +2,12 @@ package com.joker.agepride.coolweather.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joker.agepride.coolweather.R;
+import com.joker.agepride.coolweather.activity.WeatherActivity;
 import com.joker.agepride.coolweather.db.City;
 import com.joker.agepride.coolweather.db.Country;
 import com.joker.agepride.coolweather.db.Province;
@@ -56,7 +61,7 @@ public class ChooseAreaFragment extends Fragment {
     private City selectedCity;
     private int currentLevel;
     private TextView tv_location;
-
+    private SharedPreferences sp;
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.choose_area,container,false);
@@ -73,6 +78,8 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        sp= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String weatherInfo = sp.getString("weatherInfo", null);
         Log.i("legend","onActivityCreated");
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -87,6 +94,17 @@ public class ChooseAreaFragment extends Fragment {
                     Log.i("legend","currentLevel   LEVEL_CITY");
                     selectedCity=cityList.get(position);
                     queryCounties();
+                }else if (currentLevel==LEVEL_COUNTY){
+                    String weatherId = countryList.get(position).getWeatherId();
+                    Intent intent=new Intent(getActivity(), WeatherActivity.class);
+                    if (weatherInfo==null){
+                        SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                        editor.putString("weatherInfo",weatherId);
+                        editor.apply();
+                    }
+                    intent.putExtra("weather_id",weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });

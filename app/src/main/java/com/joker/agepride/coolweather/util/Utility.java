@@ -2,9 +2,11 @@ package com.joker.agepride.coolweather.util;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.joker.agepride.coolweather.db.City;
 import com.joker.agepride.coolweather.db.Country;
 import com.joker.agepride.coolweather.db.Province;
+import com.joker.agepride.coolweather.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,5 +91,17 @@ public class Utility {
             }
         }
         return false;
+    }
+    public static Weather handleWeatherResponse(String response){
+        Weather weather=null;
+        try {
+            JSONObject jsonObject=new JSONObject(response);
+            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            weather=new Gson().fromJson(weatherContent,Weather.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return weather;
     }
 }

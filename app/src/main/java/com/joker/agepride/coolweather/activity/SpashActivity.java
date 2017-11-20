@@ -14,10 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationSet;
@@ -68,10 +70,9 @@ public class SpashActivity extends Activity {
 //        splash_pic.setImageResource(SPLASH_NUMBER[random.nextInt(SPLASH_NUMBER.length)]);
 //        animateImage();
 //        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-        SharedPreferences setting = getSharedPreferences(YOUR_PREF_FILE_NAME, 0);
-        Boolean user_first = setting.getBoolean("FIRST",true);
-//        if (user_first) {
-            setting.edit().putBoolean("FIRST", false).commit();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String weatherInfo = sp.getString("weatherInfo",null);
+        if (TextUtils.isEmpty(weatherInfo)) {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -79,9 +80,9 @@ public class SpashActivity extends Activity {
                     enterChooseLocationActivity();
                 }
             },1000);
-//        }else {
-//            enterHomeActivity();
-//        }
+        }else {
+            enterHomeActivity();
+        }
     }
 
     private void enterChooseLocationActivity() {
@@ -89,7 +90,8 @@ public class SpashActivity extends Activity {
         finish();
     }
     private void enterHomeActivity(){
-
+        startActivity(new Intent(SpashActivity.this,MainActivity.class));
+        finish();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
