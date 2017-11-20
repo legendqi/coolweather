@@ -26,6 +26,8 @@ import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 
 import com.joker.agepride.coolweather.R;
+import com.joker.agepride.coolweather.fragment.FragmentWeatherInfo;
+import com.joker.agepride.coolweather.util.ConstructValue;
 import com.joker.agepride.coolweather.util.HttpUtil;
 
 import java.io.IOException;
@@ -70,6 +72,13 @@ public class SpashActivity extends Activity {
 //        splash_pic.setImageResource(SPLASH_NUMBER[random.nextInt(SPLASH_NUMBER.length)]);
 //        animateImage();
 //        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        if (ConstructValue.weatherInfoList.size()==0){
+            FragmentWeatherInfo info=new FragmentWeatherInfo();
+            info.setLocationName("成都");
+            info.setDegree("14");
+            info.setWeatherInfo("晴");
+            ConstructValue.weatherInfoList.add(info);
+        }
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherInfo = sp.getString("weatherInfo",null);
         if (TextUtils.isEmpty(weatherInfo)) {

@@ -10,12 +10,16 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -24,6 +28,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.joker.agepride.coolweather.R;
+import com.joker.agepride.coolweather.fragment.FragmentWeatherInfo;
 import com.joker.agepride.coolweather.gson.Forecast;
 import com.joker.agepride.coolweather.gson.Weather;
 import com.joker.agepride.coolweather.util.ConstructValue;
@@ -70,18 +75,44 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView car_wash_text;
     private TextView sport_text;
     private ImageView back_pic_img;
+    private SwipeRefreshLayout swipe_refresh;
+    private String weatherId;
+    private Button nav_button;
+    private Button share_button;
+    private DrawerLayout drawer_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT>=21){
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-            |View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        if (Build.VERSION.SDK_INT>=21){
+//            View decorView = getWindow().getDecorView();
+//            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+//            |View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//            getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        }
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_weather);
         back_pic_img= (ImageView) findViewById(R.id.back_pic_img);
+        drawer_layout= (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        nav_button= (Button) findViewById(R.id.nav_button);
+        share_button= (Button) findViewById(R.id.share_button);
+
+        nav_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer_layout.openDrawer(GravityCompat.START);
+//                drawer_layout.setDrawerShadow(R.layout.drawer_fragment,GravityCompat.START);
+            }
+        });
+        share_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        swipe_refresh= (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipe_refresh.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         weather_layout= (ScrollView) findViewById(R.id.weather_layout);
         title_city= (TextView) findViewById(R.id.title_city);
         title_updata_time= (TextView) findViewById(R.id.title_updata_time);
@@ -103,15 +134,22 @@ public class WeatherActivity extends AppCompatActivity {
         String weatherString = prefs.getString("weather", null);
         if (weatherString!=null){
             Weather weather = Utility.handleWeatherResponse(weatherString);
-            Log.i(ConstructValue.TAG,"weather"+weather);
-            Log.i(ConstructValue.TAG,"weather"+weather.suggestion.sport.info);
-            Log.i(ConstructValue.TAG,"weather"+weather.basic.cityName);
+//            Log.i(ConstructValue.TAG,"weather"+weather);
+//            Log.i(ConstructValue.TAG,"weather"+weather.suggestion.sport.info);
+//            Log.i(ConstructValue.TAG,"weather"+weather.basic.cityName);
+            weatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
         }else {
-            String weatherId = getIntent().getStringExtra("weather_id");
+            weatherId = getIntent().getStringExtra("weather_id");
             weather_layout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
         }
+        swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestWeather(weatherId);
+            }
+        });
     }
 
     /**
@@ -156,6 +194,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(WeatherActivity.this,"获取天气失败",Toast.LENGTH_SHORT).show();
+                        swipe_refresh.setRefreshing(false);
                     }
                 });
             }
@@ -175,10 +214,12 @@ public class WeatherActivity extends AppCompatActivity {
                         }else {
                             Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
                         }
+                        swipe_refresh.setRefreshing(false);
                     }
                 });
             }
         });
+        loadBingPic();
     }
 
     /**
@@ -186,10 +227,28 @@ public class WeatherActivity extends AppCompatActivity {
      * @param weather
      */
     private void showWeatherInfo(Weather weather) {
+
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.more.info;
+        if (ConstructValue.weatherInfoList!=null&&ConstructValue.weatherInfoList.size()==0){
+            FragmentWeatherInfo info=new FragmentWeatherInfo();
+            info.setLocationName(cityName);
+            info.setWeatherInfo(weatherInfo);
+            info.setDegree(degree);
+            ConstructValue.weatherInfoList.add(info);
+        }
+        if (ConstructValue.weatherInfoList!=null&&ConstructValue.weatherInfoList.size()>0){
+            for (FragmentWeatherInfo weatherInfo1:ConstructValue.weatherInfoList){
+                if (weatherInfo1.getLocationName().equals(cityName)){
+                    weatherInfo1.setDegree(degree);
+                    weatherInfo1.setWeatherInfo(weatherInfo);
+                }
+            }
+        }
+        Log.i(ConstructValue.TAG,"showWeatherInfo---"+ConstructValue.weatherInfoList);
+        Log.i(ConstructValue.TAG,"showWeatherInfo--size"+ConstructValue.weatherInfoList.size());
         title_city.setText(cityName);
         title_updata_time.setText(updateTime);
         degree_text.setText(degree);
