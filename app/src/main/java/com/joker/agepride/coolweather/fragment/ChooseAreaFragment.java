@@ -180,8 +180,7 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCounties(){
         title_text.setText(selectedCity.getCityName());
         back_button.setVisibility(View.VISIBLE);
-        countryList=DataSupport.where("cityid=?",String.valueOf(selectedCity.getId())).find(Country.class);
-//        countryList=DataSupport.findAll(Country.class);
+        countryList=DataSupport.where("cityId=?",String.valueOf(selectedCity.getId())).find(Country.class);
         if (countryList.size()>0){
             dataList.clear();
             for (Country country:countryList){
@@ -190,11 +189,12 @@ public class ChooseAreaFragment extends Fragment {
             adapter.notifyDataSetChanged();
             list_view.setSelection(0);
             currentLevel=LEVEL_COUNTY;
-        }else {
+        }
+        else {
             int provinceCode = selectedProvince.getProvinceCode();
             int cityCode = selectedCity.getCityCode();
             String address="http://guolin.tech/api/china/"+provinceCode+"/"+cityCode;
-            queryFromServer(address,"country");
+            queryFromServer(address,"county");
         }
     }
     private void queryCities(){
@@ -203,9 +203,7 @@ public class ChooseAreaFragment extends Fragment {
         back_button.setVisibility(View.VISIBLE);
         Log.i(ConstructValue.TAG,"DataSupport.where before");
         Log.i(ConstructValue.TAG,selectedProvince.getId()+"");
-        cityList=DataSupport.where("provinceid = ?",String.valueOf(selectedProvince.getId())).find(City.class);
-//        cityList=DataSupport.findAll(City.class);
-        Log.i(ConstructValue.TAG,"cityList==="+cityList);
+        cityList=DataSupport.where("provincdId = ?",String.valueOf(selectedProvince.getId())).find(City.class);
         if (cityList.size()>0){
             Log.i(ConstructValue.TAG,"cityList.size()>0");
             dataList.clear();
@@ -215,8 +213,8 @@ public class ChooseAreaFragment extends Fragment {
             adapter.notifyDataSetChanged();
             list_view.setSelection(0);
             currentLevel=LEVEL_CITY;
-        }else {
-            Log.i(ConstructValue.TAG,"else===");
+        }
+        else {
             int provinceCode = selectedProvince.getProvinceCode();
             String address="http://guolin.tech/api/china/"+provinceCode;
             queryFromServer(address,"city");

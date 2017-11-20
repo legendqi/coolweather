@@ -24,8 +24,14 @@ import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 
 import com.joker.agepride.coolweather.R;
+import com.joker.agepride.coolweather.util.HttpUtil;
 
+import java.io.IOException;
 import java.util.Random;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SpashActivity extends Activity {
     private static final String YOUR_PREF_FILE_NAME ="isFirst" ;
@@ -72,7 +78,7 @@ public class SpashActivity extends Activity {
                     Log.i("legend","enterChooseAcitivuty");
                     enterChooseLocationActivity();
                 }
-            },2000);
+            },1000);
 //        }else {
 //            enterHomeActivity();
 //        }
