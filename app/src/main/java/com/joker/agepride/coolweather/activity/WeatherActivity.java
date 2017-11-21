@@ -31,6 +31,7 @@ import com.joker.agepride.coolweather.R;
 import com.joker.agepride.coolweather.fragment.FragmentWeatherInfo;
 import com.joker.agepride.coolweather.gson.Forecast;
 import com.joker.agepride.coolweather.gson.Weather;
+import com.joker.agepride.coolweather.service.AutoUpdateService;
 import com.joker.agepride.coolweather.util.ConstructValue;
 import com.joker.agepride.coolweather.util.HttpUtil;
 import com.joker.agepride.coolweather.util.Utility;
@@ -237,7 +238,7 @@ public class WeatherActivity extends AppCompatActivity {
      * @param weather
      */
     private void showWeatherInfo(Weather weather) {
-
+        startService(new Intent(this, AutoUpdateService.class));
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature + "℃";
