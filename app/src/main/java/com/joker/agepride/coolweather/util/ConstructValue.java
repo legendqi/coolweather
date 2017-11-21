@@ -13,4 +13,5 @@ public class ConstructValue {
     public static final String TAG="legend";
     public static List<FragmentWeatherInfo> weatherInfoList=new ArrayList<FragmentWeatherInfo>();
     FragmentWeatherInfo fragmentWeatherInfo=new FragmentWeatherInfo();
+    public static boolean chooseFlag=false;
 }

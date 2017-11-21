@@ -1,5 +1,6 @@
 package com.joker.agepride.coolweather.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joker.agepride.coolweather.R;
+import com.joker.agepride.coolweather.activity.ChooseLocationActivity;
+import com.joker.agepride.coolweather.activity.WeatherActivity;
 import com.joker.agepride.coolweather.util.ConstructValue;
 
 import java.util.List;
@@ -47,14 +50,11 @@ public class ManagerAreaFragment extends Fragment {
         img_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChooseAreaFragment chooseAreaFragment=new ChooseAreaFragment();
-                FragmentManager manager=getFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-//                transaction.replace(R.layout.choose_fragment,chooseAreaFragment);
-                transaction.commit();
+                ConstructValue.chooseFlag=true;
+                startActivity(new Intent(getActivity(),ChooseLocationActivity.class));
             }
         });
-        recyclerview= (RecyclerView) view.findViewById(R.id.recyclerview);
+        recyclerview = (RecyclerView) view.findViewById(R.id.recyclerview);
         Log.i(ConstructValue.TAG,"ConstructValue.weatherInfoList"+ConstructValue.weatherInfoList.get(0).getLocationName());
         WeatherAdapater adapater=new WeatherAdapater(ConstructValue.weatherInfoList);
         LinearLayoutManager manager=new LinearLayoutManager(getActivity());

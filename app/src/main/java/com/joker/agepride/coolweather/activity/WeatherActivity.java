@@ -75,11 +75,11 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView car_wash_text;
     private TextView sport_text;
     private ImageView back_pic_img;
-    private SwipeRefreshLayout swipe_refresh;
+    public SwipeRefreshLayout swipe_refresh;
     private String weatherId;
     private Button nav_button;
     private Button share_button;
-    private DrawerLayout drawer_layout;
+    public DrawerLayout drawer_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +152,15 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        drawer_layout.closeDrawers();
+//        requestWeather(getIntent().getStringExtra("weather_id"));
+//        swipe_refresh.setRefreshing(true);
+//
+//    }
+
     /**
      * 加载必应每日一图片
      */
@@ -184,7 +193,7 @@ public class WeatherActivity extends AppCompatActivity {
      * 根据天气的id请求城市天气信息
      * @param weatherId
      */
-    private void requestWeather(String weatherId) {
+    public void requestWeather(String weatherId) {
         String weatherUrl="http://guolin.tech/api/weather?cityid="
                 +weatherId+"&key=b5c004744193406591f83f1200c99368";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
@@ -211,7 +220,8 @@ public class WeatherActivity extends AppCompatActivity {
                             editor.putString("weather",responseText);
                             editor.apply();
                             showWeatherInfo(weather);
-                        }else {
+                        }
+                        else {
                             Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
                         }
                         swipe_refresh.setRefreshing(false);
@@ -232,18 +242,23 @@ public class WeatherActivity extends AppCompatActivity {
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.more.info;
+
+        FragmentWeatherInfo info=new FragmentWeatherInfo();
+        info.setLocationName(cityName);
+        info.setWeatherInfo(weatherInfo);
+        info.setDegree(degree);
+
         if (ConstructValue.weatherInfoList!=null&&ConstructValue.weatherInfoList.size()==0){
-            FragmentWeatherInfo info=new FragmentWeatherInfo();
-            info.setLocationName(cityName);
-            info.setWeatherInfo(weatherInfo);
-            info.setDegree(degree);
+
             ConstructValue.weatherInfoList.add(info);
         }
-        if (ConstructValue.weatherInfoList!=null&&ConstructValue.weatherInfoList.size()>0){
+        else if (ConstructValue.weatherInfoList!=null&&ConstructValue.weatherInfoList.size()>0){
             for (FragmentWeatherInfo weatherInfo1:ConstructValue.weatherInfoList){
                 if (weatherInfo1.getLocationName().equals(cityName)){
                     weatherInfo1.setDegree(degree);
                     weatherInfo1.setWeatherInfo(weatherInfo);
+                }else{
+                    ConstructValue.weatherInfoList.add(info);
                 }
             }
         }

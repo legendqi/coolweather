@@ -54,6 +54,7 @@
             android:process=":remote" />
 
         <activity
+            android:launchMode="singleTask"
             android:theme="@style/NoAction"
             android:name=".activity.WeatherActivity" />
         <activity android:name=".activity.MainActivity"></activity>

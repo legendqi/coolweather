@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joker.agepride.coolweather.R;
+import com.joker.agepride.coolweather.activity.ChooseLocationActivity;
 import com.joker.agepride.coolweather.activity.WeatherActivity;
 import com.joker.agepride.coolweather.db.City;
 import com.joker.agepride.coolweather.db.Country;
@@ -102,9 +103,18 @@ public class ChooseAreaFragment extends Fragment {
                         editor.putString("weatherInfo",weatherId);
                         editor.apply();
                     }
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    if (getActivity() instanceof ChooseLocationActivity){
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if (getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity= (WeatherActivity) getActivity();
+                        activity.drawer_layout.closeDrawers();
+                        activity.swipe_refresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
+
                 }
             }
         });
